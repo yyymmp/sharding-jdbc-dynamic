@@ -17,7 +17,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 @Slf4j
-@SpringBootTest(properties = "spring.profiles.active=dev")
+@SpringBootTest/*(properties = "spring.profiles.active=dev")*/
 class ShardingJdbcDemoApplicationTests {
 
     @Autowired

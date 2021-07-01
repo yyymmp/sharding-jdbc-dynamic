@@ -6,9 +6,12 @@ import com.baomidou.dynamic.datasource.provider.DynamicDataSourceProvider;
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DataSourceProperty;
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceAutoConfiguration;
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceProperties;
-import org.apache.shardingsphere.shardingjdbc.jdbc.adapter.AbstractDataSourceAdapter;
-import org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration;
+//import org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration;
+import org.apache.shardingsphere.driver.jdbc.core.datasource.ShardingSphereDataSource;
+import org.apache.shardingsphere.driver.jdbc.unsupported.AbstractUnsupportedOperationDataSource;
+import org.apache.shardingsphere.spring.boot.ShardingSphereAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +24,7 @@ import java.util.Map;
 
 /**
  * 动态数据源配置：
- *
+ * <p>
  * 使用{@link com.baomidou.dynamic.datasource.annotation.DS}注解，切换数据源
  *
  * <code>@DS(DataSourceConfiguration.SHARDING_DATA_SOURCE_NAME)</code>
@@ -31,7 +34,8 @@ import java.util.Map;
  */
 @Configuration
 @AutoConfigureBefore({DynamicDataSourceAutoConfiguration.class,
-        SpringBootConfiguration.class})
+        //ShardingSphereAutoConfiguration:读取配置文件数据源
+        ShardingSphereAutoConfiguration.class})
 public class DataSourceConfiguration {
 
     /**
@@ -51,11 +55,15 @@ public class DataSourceConfiguration {
      * <p>2. 主从数据源: masterSlaveDataSource;
      * <p>3. 脱敏数据源：encryptDataSource;
      * <p>4. 影子数据源：shadowDataSource
-     *
      */
     @Lazy
-    @Resource(name = "shardingDataSource")
-    AbstractDataSourceAdapter shardingDataSource;
+//    @Resource(name = "shardingDataSource")
+    @Autowired
+    DataSource shardingDataSource; //无法为final生成自类
+
+    //如果使用ShardingSphereDataSource 则无法为final生成代理类
+//    ShardingSphereDataSource shardingDataSource;
+
 
     @Bean
     public DynamicDataSourceProvider dynamicDataSourceProvider() {
@@ -72,9 +80,7 @@ public class DataSourceConfiguration {
     }
 
     /**
-     * 将动态数据源设置为首选的
-     * 当spring存在多个数据源时, 自动注入的是首选的对象
-     * 设置为主要的数据源之后，就可以支持shardingjdbc原生的配置方式了
+     * 将动态数据源设置为首选的 当spring存在多个数据源时, 自动注入的是首选的对象 设置为主要的数据源之后，就可以支持shardingjdbc原生的配置方式了
      *
      * @return
      */
