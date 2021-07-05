@@ -6,21 +6,15 @@ import com.baomidou.dynamic.datasource.provider.DynamicDataSourceProvider;
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DataSourceProperty;
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceAutoConfiguration;
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceProperties;
-//import org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration;
-import org.apache.shardingsphere.driver.jdbc.core.datasource.ShardingSphereDataSource;
-import org.apache.shardingsphere.driver.jdbc.unsupported.AbstractUnsupportedOperationDataSource;
-import org.apache.shardingsphere.spring.boot.ShardingSphereAutoConfiguration;
+import java.util.Map;
+import javax.sql.DataSource;
+import org.apache.shardingsphere.spring.boot.SpringBootConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
-
-import javax.annotation.Resource;
-import javax.sql.DataSource;
-import java.util.Map;
 
 /**
  * 动态数据源配置：
@@ -34,8 +28,8 @@ import java.util.Map;
  */
 @Configuration
 @AutoConfigureBefore({DynamicDataSourceAutoConfiguration.class,
-        //ShardingSphereAutoConfiguration:读取配置文件数据源
-        ShardingSphereAutoConfiguration.class})
+        SpringBootConfiguration.class
+      /*  ShardingSphereAutoConfiguration.class  beta版本*/})
 public class DataSourceConfiguration {
 
     /**
@@ -59,7 +53,7 @@ public class DataSourceConfiguration {
     @Lazy
 //    @Resource(name = "shardingDataSource")
     @Autowired
-    DataSource shardingDataSource; //无法为final生成自类
+    DataSource  shardingDataSource; //无法为final生成自类
 
     //如果使用ShardingSphereDataSource 则无法为final生成代理类
 //    ShardingSphereDataSource shardingDataSource;
